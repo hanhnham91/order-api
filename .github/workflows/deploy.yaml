@@ -1,0 +1,51 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main # Or your main development branch
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{vars.EC2_HOST}}" >> ~/.ssh/known_hosts
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22' # Or your Go version
+
+      - name: Build Go application
+        run: |
+          go build -o ./app_build/${{vars.APP_NAME}}/${{vars.APP_NAME}} cmd/main.go
+          scp -r ./app_build/${{vars.APP_NAME}} ${{vars.EC2_USER}}@${{vars.EC2_HOST}}:/tmp/${{vars.APP_NAME}}
+
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ${{ vars.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Stop any existing ${{vars.APP_NAME}} (adjust command based on how you run it)
+            sudo killall -KILL ${{vars.APP_NAME}} || echo \"Process was not running.\"
+            
+            cp -r /tmp/${{vars.APP_NAME}} /home/${{vars.EC2_USER}}/apps
+            rm -rf /tmp/${{vars.APP_NAME}}
+            chmod +x -R /home/${{vars.EC2_USER}}/apps/${{vars.APP_NAME}}
+                      
+            # Run the new service
+            cd /home/${{vars.EC2_USER}}/apps/${{vars.APP_NAME}}
+            nohup ./${{vars.APP_NAME}} > /var/log/app_logs/${{vars.APP_NAME}}.log 2>&1 &
+            sleep 3
+            echo "${{vars.APP_NAME}} is deployed and running in the background."

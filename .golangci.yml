@@ -1,0 +1,83 @@
+linters:
+  enable-all: true
+  disable:
+    - ireturn
+    - goimports
+    - gochecknoglobals
+    - gochecknoinits
+    - gosec
+    - gomodguard
+    - gomnd
+    - mnd
+    - err113
+    - exportloopref
+    - execinquery
+    - wrapcheck
+    - forcetypeassert
+    - maintidx
+    - exhaustruct
+    - rowserrcheck
+    - sqlclosecheck
+    - wastedassign
+    - gocyclo
+    - cyclop
+    - protogetter
+    - dupl
+
+run:
+  timeout: 15m
+  exclude-dirs:
+    - build
+    - tmp
+    - scripts
+
+  # include test files or not, default is true
+  tests: false
+
+issues:
+  exclude-use-default: true
+
+linters-settings:
+  depguard:
+    rules:
+      main:
+        files:
+          - $all
+        deny:
+          - pkg: "github.com/sirupsen/logrus"
+            desc: not allowed
+  interfacebloat:
+    max: 30
+  varnamelen:
+    min-name-length: 1
+  funlen:
+    lines: 313
+    statements: 170
+  lll:
+    line-length: 150
+  gocognit:
+    min-complexity: 35
+  nestif:
+    min-complexity: 50
+  tagalign:
+    align: false
+    order:
+      - gorm
+      - json
+      - header
+      - param
+      - query
+      - form
+      - mod
+      - validate
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        # any struct tag type can be used.
+        # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        json: snake
+  gci:
+    sections:
+      - standard
+      - default

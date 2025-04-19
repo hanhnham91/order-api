@@ -1,6 +1,14 @@
 build:
 	go build -o ./tmp/app.exe ./cmd/main.go
 
+prepare:
+	@go install github.com/air-verse/air@latest
+	@go install github.com/swaggo/swag/cmd/swag@latest
+	@go install github.com/daixiang0/gci@latest
+	@go install github.com/rubenv/sql-migrate/...@latest
+	@go install github.com/securego/gosec/v2/cmd/gosec@latest
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin v1.61.0
+
 lint:
 	golangci-lint run
 

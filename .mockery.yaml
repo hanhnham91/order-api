@@ -1,0 +1,13 @@
+packages:   
+    github.com/hanhnham91/order-service/repository/product:
+        config:
+            outpkg: "mockproduct"
+            dir: "mocks/product"
+        interfaces:
+            Repository:
+    github.com/hanhnham91/order-service/repository/order:
+        config:
+            outpkg: "mockorder"
+            dir: "mocks/order"
+        interfaces:
+            Repository:

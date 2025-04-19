@@ -28,6 +28,7 @@ gen:
 test:	
 	@mkdir coverage || true
 	@go test -race -v -coverprofile=coverage/coverage.txt.tmp -count=1 ./...  
+	@go test -race -v -coverprofile=coverage/coverage.txt.tmp -count=1 ./usecase/... ./delivery/...  # Focus on these layer with coverage
 	@cat coverage/coverage.txt.tmp | grep -v "mock_" > coverage/coverage.txt
 	@go tool cover -func=coverage/coverage.txt
 	@go tool cover -html=coverage/coverage.txt -o coverage/index.html

@@ -11,3 +11,9 @@ packages:
             dir: "mocks/order"
         interfaces:
             Repository:
+    github.com/hanhnham91/order-service/usecase/order:
+        config:
+            outpkg: "mockusecaseorder"
+            dir: "mocks/usecase/order"
+        interfaces:
+            IOrderCreateUseCase:

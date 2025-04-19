@@ -1,14 +1,57 @@
-name: Deploy Application
+name: Lint, Test, and Deploy Go API
 
 on:
-  push:
+  pull_request:
     branches:
-      - main # Or your main development branch
+      - develop
+      - main
+    types: [opened, synchronize, reopened]
 
 jobs:
+  lint:
+    name: Run Go Linters
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' # Only run on pull requests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5 
+        with:
+          go-version: '>=1.22'
+
+      - name: Install Go linters
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
+
+      - name: Run Go linters
+        run: make lint
+
+  test:
+    name: Run Go Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' # Only run on pull requests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.22'
+
+      - name: Run Go tests
+        run: make test
+
   build-and-deploy:
     name: Build and Deploy Binary
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'refs/heads/main' && github.event.pull_request.merged == true # Run on merged PRs to main
+    needs:
+      - lint
+      - test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,7 +66,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22' # Or your Go version
+          go-version: '1.22'
 
       - name: Build Go application
         run: |
@@ -37,13 +80,13 @@ jobs:
           username: ${{ vars.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Stop any existing ${{vars.APP_NAME}} (adjust command based on how you run it)
-            sudo killall -KILL ${{vars.APP_NAME}} || echo \"Process was not running.\"
-            
+            # Stop any existing ${{vars.APP_NAME}}
+            sudo killall -KILL ${{vars.APP_NAME}} || echo "Process was not running."
+
             cp -r /tmp/${{vars.APP_NAME}} /home/${{vars.EC2_USER}}/apps
             rm -rf /tmp/${{vars.APP_NAME}}
             chmod +x -R /home/${{vars.EC2_USER}}/apps/${{vars.APP_NAME}}
-                      
+
             # Run the new service
             cd /home/${{vars.EC2_USER}}/apps/${{vars.APP_NAME}}
             nohup ./${{vars.APP_NAME}} > /var/log/app_logs/${{vars.APP_NAME}}.log 2>&1 &

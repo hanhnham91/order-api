@@ -10,6 +10,7 @@ import (
 	"github.com/hanhnham91/order-service/repository/product"
 	pkgerror "github.com/hanhnham91/pkg/error"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -56,7 +57,7 @@ func Test_productFindUseCase_Execute(t *testing.T) {
 		}
 
 		productRepo.EXPECT().
-			FindAll().
+			FindAll(mock.Anything).
 			Return(expectedProducts, nil)
 
 		uc := productFindUseCase{
@@ -73,7 +74,7 @@ func Test_productFindUseCase_Execute(t *testing.T) {
 		t.Parallel()
 		productRepo := mockproduct.NewMockRepository(t)
 		productRepo.EXPECT().
-			FindAll().
+			FindAll(mock.Anything).
 			Return([]entity.Product{}, nil)
 
 		uc := productFindUseCase{
@@ -91,7 +92,7 @@ func Test_productFindUseCase_Execute(t *testing.T) {
 		expectedErr := errors.New("database error")
 
 		productRepo.EXPECT().
-			FindAll().
+			FindAll(mock.Anything).
 			Return(nil, expectedErr)
 
 		uc := productFindUseCase{

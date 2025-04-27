@@ -3,6 +3,8 @@
 package mockproduct
 
 import (
+	context "context"
+
 	entity "github.com/hanhnham91/order-service/entity"
 	specifications "github.com/hanhnham91/order-service/repository/specifications"
 	mock "github.com/stretchr/testify/mock"
@@ -21,9 +23,56 @@ func (_m *MockRepository) EXPECT() *MockRepository_Expecter {
 	return &MockRepository_Expecter{mock: &_m.Mock}
 }
 
-// Find provides a mock function with given fields: spec
-func (_m *MockRepository) Find(spec specifications.I) ([]entity.Product, error) {
-	ret := _m.Called(spec)
+// Create provides a mock function with given fields: ctx, data
+func (_m *MockRepository) Create(ctx context.Context, data *entity.Product) error {
+	ret := _m.Called(ctx, data)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Product) error); ok {
+		r0 = rf(ctx, data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockRepository_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
+type MockRepository_Create_Call struct {
+	*mock.Call
+}
+
+// Create is a helper method to define mock.On call
+//   - ctx context.Context
+//   - data *entity.Product
+func (_e *MockRepository_Expecter) Create(ctx interface{}, data interface{}) *MockRepository_Create_Call {
+	return &MockRepository_Create_Call{Call: _e.mock.On("Create", ctx, data)}
+}
+
+func (_c *MockRepository_Create_Call) Run(run func(ctx context.Context, data *entity.Product)) *MockRepository_Create_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(*entity.Product))
+	})
+	return _c
+}
+
+func (_c *MockRepository_Create_Call) Return(_a0 error) *MockRepository_Create_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockRepository_Create_Call) RunAndReturn(run func(context.Context, *entity.Product) error) *MockRepository_Create_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// Find provides a mock function with given fields: ctx, spec
+func (_m *MockRepository) Find(ctx context.Context, spec specifications.I) ([]entity.Product, error) {
+	ret := _m.Called(ctx, spec)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Find")
@@ -31,19 +80,19 @@ func (_m *MockRepository) Find(spec specifications.I) ([]entity.Product, error) 
 
 	var r0 []entity.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(specifications.I) ([]entity.Product, error)); ok {
-		return rf(spec)
+	if rf, ok := ret.Get(0).(func(context.Context, specifications.I) ([]entity.Product, error)); ok {
+		return rf(ctx, spec)
 	}
-	if rf, ok := ret.Get(0).(func(specifications.I) []entity.Product); ok {
-		r0 = rf(spec)
+	if rf, ok := ret.Get(0).(func(context.Context, specifications.I) []entity.Product); ok {
+		r0 = rf(ctx, spec)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.Product)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(specifications.I) error); ok {
-		r1 = rf(spec)
+	if rf, ok := ret.Get(1).(func(context.Context, specifications.I) error); ok {
+		r1 = rf(ctx, spec)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -57,14 +106,15 @@ type MockRepository_Find_Call struct {
 }
 
 // Find is a helper method to define mock.On call
+//   - ctx context.Context
 //   - spec specifications.I
-func (_e *MockRepository_Expecter) Find(spec interface{}) *MockRepository_Find_Call {
-	return &MockRepository_Find_Call{Call: _e.mock.On("Find", spec)}
+func (_e *MockRepository_Expecter) Find(ctx interface{}, spec interface{}) *MockRepository_Find_Call {
+	return &MockRepository_Find_Call{Call: _e.mock.On("Find", ctx, spec)}
 }
 
-func (_c *MockRepository_Find_Call) Run(run func(spec specifications.I)) *MockRepository_Find_Call {
+func (_c *MockRepository_Find_Call) Run(run func(ctx context.Context, spec specifications.I)) *MockRepository_Find_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(specifications.I))
+		run(args[0].(context.Context), args[1].(specifications.I))
 	})
 	return _c
 }
@@ -74,14 +124,14 @@ func (_c *MockRepository_Find_Call) Return(_a0 []entity.Product, _a1 error) *Moc
 	return _c
 }
 
-func (_c *MockRepository_Find_Call) RunAndReturn(run func(specifications.I) ([]entity.Product, error)) *MockRepository_Find_Call {
+func (_c *MockRepository_Find_Call) RunAndReturn(run func(context.Context, specifications.I) ([]entity.Product, error)) *MockRepository_Find_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// FindAll provides a mock function with given fields:
-func (_m *MockRepository) FindAll() ([]entity.Product, error) {
-	ret := _m.Called()
+// FindAll provides a mock function with given fields: ctx
+func (_m *MockRepository) FindAll(ctx context.Context) ([]entity.Product, error) {
+	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindAll")
@@ -89,19 +139,19 @@ func (_m *MockRepository) FindAll() ([]entity.Product, error) {
 
 	var r0 []entity.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]entity.Product, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(context.Context) ([]entity.Product, error)); ok {
+		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func() []entity.Product); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Product); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.Product)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -115,13 +165,14 @@ type MockRepository_FindAll_Call struct {
 }
 
 // FindAll is a helper method to define mock.On call
-func (_e *MockRepository_Expecter) FindAll() *MockRepository_FindAll_Call {
-	return &MockRepository_FindAll_Call{Call: _e.mock.On("FindAll")}
+//   - ctx context.Context
+func (_e *MockRepository_Expecter) FindAll(ctx interface{}) *MockRepository_FindAll_Call {
+	return &MockRepository_FindAll_Call{Call: _e.mock.On("FindAll", ctx)}
 }
 
-func (_c *MockRepository_FindAll_Call) Run(run func()) *MockRepository_FindAll_Call {
+func (_c *MockRepository_FindAll_Call) Run(run func(ctx context.Context)) *MockRepository_FindAll_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(context.Context))
 	})
 	return _c
 }
@@ -131,14 +182,14 @@ func (_c *MockRepository_FindAll_Call) Return(_a0 []entity.Product, _a1 error) *
 	return _c
 }
 
-func (_c *MockRepository_FindAll_Call) RunAndReturn(run func() ([]entity.Product, error)) *MockRepository_FindAll_Call {
+func (_c *MockRepository_FindAll_Call) RunAndReturn(run func(context.Context) ([]entity.Product, error)) *MockRepository_FindAll_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// Get provides a mock function with given fields: spec
-func (_m *MockRepository) Get(spec specifications.I) (entity.Product, error) {
-	ret := _m.Called(spec)
+// Get provides a mock function with given fields: ctx, spec
+func (_m *MockRepository) Get(ctx context.Context, spec specifications.I) (entity.Product, error) {
+	ret := _m.Called(ctx, spec)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
@@ -146,17 +197,17 @@ func (_m *MockRepository) Get(spec specifications.I) (entity.Product, error) {
 
 	var r0 entity.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(specifications.I) (entity.Product, error)); ok {
-		return rf(spec)
+	if rf, ok := ret.Get(0).(func(context.Context, specifications.I) (entity.Product, error)); ok {
+		return rf(ctx, spec)
 	}
-	if rf, ok := ret.Get(0).(func(specifications.I) entity.Product); ok {
-		r0 = rf(spec)
+	if rf, ok := ret.Get(0).(func(context.Context, specifications.I) entity.Product); ok {
+		r0 = rf(ctx, spec)
 	} else {
 		r0 = ret.Get(0).(entity.Product)
 	}
 
-	if rf, ok := ret.Get(1).(func(specifications.I) error); ok {
-		r1 = rf(spec)
+	if rf, ok := ret.Get(1).(func(context.Context, specifications.I) error); ok {
+		r1 = rf(ctx, spec)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -170,14 +221,15 @@ type MockRepository_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
+//   - ctx context.Context
 //   - spec specifications.I
-func (_e *MockRepository_Expecter) Get(spec interface{}) *MockRepository_Get_Call {
-	return &MockRepository_Get_Call{Call: _e.mock.On("Get", spec)}
+func (_e *MockRepository_Expecter) Get(ctx interface{}, spec interface{}) *MockRepository_Get_Call {
+	return &MockRepository_Get_Call{Call: _e.mock.On("Get", ctx, spec)}
 }
 
-func (_c *MockRepository_Get_Call) Run(run func(spec specifications.I)) *MockRepository_Get_Call {
+func (_c *MockRepository_Get_Call) Run(run func(ctx context.Context, spec specifications.I)) *MockRepository_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(specifications.I))
+		run(args[0].(context.Context), args[1].(specifications.I))
 	})
 	return _c
 }
@@ -187,7 +239,7 @@ func (_c *MockRepository_Get_Call) Return(_a0 entity.Product, _a1 error) *MockRe
 	return _c
 }
 
-func (_c *MockRepository_Get_Call) RunAndReturn(run func(specifications.I) (entity.Product, error)) *MockRepository_Get_Call {
+func (_c *MockRepository_Get_Call) RunAndReturn(run func(context.Context, specifications.I) (entity.Product, error)) *MockRepository_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }

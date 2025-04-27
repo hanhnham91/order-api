@@ -14,6 +14,7 @@ import (
 	"github.com/hanhnham91/order-service/repository/specifications"
 	pkgerror "github.com/hanhnham91/pkg/error"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -88,11 +89,11 @@ func Test_orderCreateUseCase_Execute(t *testing.T) {
 			},
 		}
 		productRepo.EXPECT().
-			Find(specifications.ProductByIDs(productIDs)).
+			Find(mock.Anything, specifications.ProductByIDs(productIDs)).
 			Return(products, nil)
 
 		orderRepo.EXPECT().
-			Create(&entity.Order{
+			Create(mock.Anything, &entity.Order{
 				CouponCode: req.CouponCode,
 				Amount:     10,
 				OrderItems: []entity.OrderItem{
@@ -137,7 +138,7 @@ func Test_orderCreateUseCase_Execute(t *testing.T) {
 
 		expectedErr := errors.New("errors")
 		productRepo.EXPECT().
-			Find(specifications.ProductByIDs(productIDs)).
+			Find(mock.Anything, specifications.ProductByIDs(productIDs)).
 			Return(nil, expectedErr)
 
 		uc := orderCreateUseCase{
@@ -167,7 +168,7 @@ func Test_orderCreateUseCase_Execute(t *testing.T) {
 		orderRepo := mockorder.NewMockRepository(t)
 
 		productRepo.EXPECT().
-			Find(specifications.ProductByIDs(productIDs)).
+			Find(mock.Anything, specifications.ProductByIDs(productIDs)).
 			Return([]entity.Product{}, nil)
 
 		uc := orderCreateUseCase{
@@ -204,12 +205,12 @@ func Test_orderCreateUseCase_Execute(t *testing.T) {
 			},
 		}
 		productRepo.EXPECT().
-			Find(specifications.ProductByIDs(productIDs)).
+			Find(mock.Anything, specifications.ProductByIDs(productIDs)).
 			Return(products, nil)
 
 		expectedErr := errors.New("database error")
 		orderRepo.EXPECT().
-			Create(&entity.Order{
+			Create(mock.Anything, &entity.Order{
 				CouponCode: req.CouponCode,
 				Amount:     10,
 				OrderItems: []entity.OrderItem{
@@ -253,11 +254,11 @@ func Test_orderCreateUseCase_Execute(t *testing.T) {
 			{ID: 2, Name: "Product B", Price: 10},
 		}
 		productRepo.EXPECT().
-			Find(specifications.ProductByIDs(productIDs)).
+			Find(mock.Anything, specifications.ProductByIDs(productIDs)).
 			Return(products, nil)
 
 		orderRepo.EXPECT().
-			Create(&entity.Order{
+			Create(mock.Anything, &entity.Order{
 				CouponCode: req.CouponCode,
 				Amount:     20, // (2 * 5) + (1 * 10)
 				OrderItems: []entity.OrderItem{

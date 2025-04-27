@@ -1,6 +1,8 @@
 package product
 
 import (
+	"context"
+
 	"github.com/hanhnham91/order-service/entity"
 	"github.com/hanhnham91/order-service/repository/specifications"
 	"gorm.io/gorm"
@@ -14,27 +16,27 @@ type dbRepository struct {
 	db *gorm.DB
 }
 
-func (p *dbRepository) Create(data *entity.Product) error {
-	return p.db.Create(data).Error
+func (p *dbRepository) Create(ctx context.Context, data *entity.Product) error {
+	return p.db.WithContext(ctx).Create(data).Error
 }
 
-func (p *dbRepository) FindAll() ([]entity.Product, error) {
+func (p *dbRepository) FindAll(ctx context.Context) ([]entity.Product, error) {
 	var data []entity.Product
-	err := p.db.Preload("Image").Find(&data).Error
+	err := p.db.WithContext(ctx).Preload("Image").Find(&data).Error
 
 	return data, err
 }
 
-func (p *dbRepository) Find(spec specifications.I) ([]entity.Product, error) {
+func (p *dbRepository) Find(ctx context.Context, spec specifications.I) ([]entity.Product, error) {
 	var data []entity.Product
-	err := spec.GormQuery(p.db.Preload("Image")).Find(&data).Error
+	err := spec.GormQuery(p.db.WithContext(ctx).Preload("Image")).Find(&data).Error
 
 	return data, err
 }
 
-func (p *dbRepository) Get(spec specifications.I) (entity.Product, error) {
+func (p *dbRepository) Get(ctx context.Context, spec specifications.I) (entity.Product, error) {
 	var data entity.Product
-	err := spec.GormQuery(p.db.Preload("Image")).First(&data).Error
+	err := spec.GormQuery(p.db.WithContext(ctx).Preload("Image")).First(&data).Error
 
 	return data, err
 }

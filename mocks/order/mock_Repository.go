@@ -3,6 +3,8 @@
 package mockorder
 
 import (
+	context "context"
+
 	entity "github.com/hanhnham91/order-service/entity"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -20,17 +22,17 @@ func (_m *MockRepository) EXPECT() *MockRepository_Expecter {
 	return &MockRepository_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function with given fields: data
-func (_m *MockRepository) Create(data *entity.Order) error {
-	ret := _m.Called(data)
+// Create provides a mock function with given fields: ctx, data
+func (_m *MockRepository) Create(ctx context.Context, data *entity.Order) error {
+	ret := _m.Called(ctx, data)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Order) error); ok {
-		r0 = rf(data)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Order) error); ok {
+		r0 = rf(ctx, data)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -44,14 +46,15 @@ type MockRepository_Create_Call struct {
 }
 
 // Create is a helper method to define mock.On call
+//   - ctx context.Context
 //   - data *entity.Order
-func (_e *MockRepository_Expecter) Create(data interface{}) *MockRepository_Create_Call {
-	return &MockRepository_Create_Call{Call: _e.mock.On("Create", data)}
+func (_e *MockRepository_Expecter) Create(ctx interface{}, data interface{}) *MockRepository_Create_Call {
+	return &MockRepository_Create_Call{Call: _e.mock.On("Create", ctx, data)}
 }
 
-func (_c *MockRepository_Create_Call) Run(run func(data *entity.Order)) *MockRepository_Create_Call {
+func (_c *MockRepository_Create_Call) Run(run func(ctx context.Context, data *entity.Order)) *MockRepository_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*entity.Order))
+		run(args[0].(context.Context), args[1].(*entity.Order))
 	})
 	return _c
 }
@@ -61,7 +64,7 @@ func (_c *MockRepository_Create_Call) Return(_a0 error) *MockRepository_Create_C
 	return _c
 }
 
-func (_c *MockRepository_Create_Call) RunAndReturn(run func(*entity.Order) error) *MockRepository_Create_Call {
+func (_c *MockRepository_Create_Call) RunAndReturn(run func(context.Context, *entity.Order) error) *MockRepository_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }

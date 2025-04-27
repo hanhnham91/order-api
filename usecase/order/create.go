@@ -24,7 +24,7 @@ func NewOrderCreateUseCase(productRepo product.Repository, orderRepo order.Repos
 }
 
 func (u *orderCreateUseCase) Execute(
-	_ context.Context,
+	ctx context.Context,
 	req payload.CreateOrderRequest,
 ) (*entity.Order, []entity.Product, error) {
 	var (
@@ -40,7 +40,7 @@ func (u *orderCreateUseCase) Execute(
 		productIDs = append(productIDs, req.Items[i].ProductID)
 	}
 
-	products, err := u.productRepo.Find(specifications.ProductByIDs(productIDs))
+	products, err := u.productRepo.Find(ctx, specifications.ProductByIDs(productIDs))
 	if err != nil {
 		return nil, nil, pkgerror.ErrInternalServerError(err)
 	}
@@ -65,7 +65,7 @@ func (u *orderCreateUseCase) Execute(
 
 	myOrder.Amount = total
 
-	if err = u.orderRepo.Create(myOrder); err != nil {
+	if err = u.orderRepo.Create(ctx, myOrder); err != nil {
 		return nil, nil, pkgerror.ErrInternalServerError(err)
 	}
 

@@ -21,8 +21,8 @@ func NewProductGetByIDUseCase(productRepo product.Repository) IProductGetUseCase
 	}
 }
 
-func (u *productGetByIDUseCase) Execute(_ context.Context, id int64) (entity.Product, error) {
-	myProduct, err := u.productRepo.Get(specifications.ProductByID(id))
+func (u *productGetByIDUseCase) Execute(ctx context.Context, id int64) (entity.Product, error) {
+	myProduct, err := u.productRepo.Get(ctx, specifications.ProductByID(id))
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return entity.Product{}, pkgerror.ErrNotFound()

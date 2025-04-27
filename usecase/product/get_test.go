@@ -11,6 +11,7 @@ import (
 	"github.com/hanhnham91/order-service/repository/specifications"
 	pkgerror "github.com/hanhnham91/pkg/error"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
@@ -56,7 +57,7 @@ func Test_productGetByIDUseCase_Execute(t *testing.T) {
 		expectedProduct := entity.Product{ID: 1, Name: "Test Product", Price: 25.0}
 
 		productRepo.EXPECT().
-			Get(specifications.ProductByID(int64(1))).
+			Get(mock.Anything, specifications.ProductByID(int64(1))).
 			Return(expectedProduct, nil)
 
 		uc := productGetByIDUseCase{
@@ -74,7 +75,7 @@ func Test_productGetByIDUseCase_Execute(t *testing.T) {
 		productRepo := mockproduct.NewMockRepository(t)
 
 		productRepo.EXPECT().
-			Get(specifications.ProductByID(int64(99))).
+			Get(mock.Anything, specifications.ProductByID(int64(99))).
 			Return(entity.Product{}, gorm.ErrRecordNotFound)
 
 		uc := productGetByIDUseCase{
@@ -94,7 +95,7 @@ func Test_productGetByIDUseCase_Execute(t *testing.T) {
 		expectedErr := errors.New("database error")
 
 		productRepo.EXPECT().
-			Get(specifications.ProductByID(int64(1))).
+			Get(mock.Anything, specifications.ProductByID(int64(1))).
 			Return(entity.Product{}, expectedErr)
 
 		uc := productGetByIDUseCase{

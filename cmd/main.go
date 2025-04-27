@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/hanhnham91/order-service/client/sql"
+	"github.com/hanhnham91/order-service/config"
 	serviceHTTP "github.com/hanhnham91/order-service/delivery"
 	"github.com/hanhnham91/order-service/entity"
 	"github.com/soheilhy/cmux"
@@ -17,6 +18,13 @@ import (
 
 func init() {
 	db := sql.GetClient
+
+	if !db().Migrator().HasTable(&entity.User{}) {
+		err := db().Migrator().CreateTable(&entity.User{})
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	if !db().Migrator().HasTable(&entity.Product{}) {
 		err := db().Migrator().CreateTable(&entity.Product{})
@@ -185,7 +193,9 @@ func init() {
 }
 
 func main() {
-	l, err := net.Listen("tcp", ":"+"8080")
+	cfg := config.GetConfig()
+
+	l, err := net.Listen("tcp", ":"+cfg.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -199,7 +209,7 @@ func main() {
 	go func() {
 		h.Listener = m.Match(cmux.HTTP1Fast(http.MethodPatch))
 
-		log.Printf("Server is running on http://localhost:%s", "8080")
+		log.Printf("Server is running on http://localhost:%s", cfg.Port)
 
 		errs <- h.Start("")
 	}()

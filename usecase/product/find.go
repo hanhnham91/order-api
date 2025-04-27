@@ -18,8 +18,8 @@ func NewProductFindUseCase(productRepo product.Repository) IProductFindUseCase {
 	}
 }
 
-func (u *productFindUseCase) Execute(_ context.Context) ([]entity.Product, error) {
-	products, err := u.productRepo.FindAll()
+func (u *productFindUseCase) Execute(ctx context.Context) ([]entity.Product, error) {
+	products, err := u.productRepo.FindAll(ctx)
 	if err != nil {
 		return nil, pkgerror.ErrInternalServerError(err)
 	}
